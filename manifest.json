@@ -1,25 +1,16 @@
 {
-  "name": "Smart Kitchen",
-  "short_name": "Kitchen",
-  "id": "/robotics/",
-  "start_url": "/robotics/",
+  "name": "Smart Kitchen Assistant",
+  "short_name": "Kitchen IoT",
+  "description": "Milk boil-over guard and cooker whistle monitor with app control.",
+  "start_url": "/robotics/?source=pwa",
   "scope": "/robotics/",
   "display": "standalone",
-  "background_color": "#0b1220",
-  "theme_color": "#1c2541",
-  "description": "Real-time kitchen monitoring and control.",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
   "icons": [
-    {
-      "src": "/robotics/icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/robotics/icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    }
+    { "src": "/robotics/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/robotics/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/robotics/icons/maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/robotics/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }

@@ -2,126 +2,147 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Smart Kitchen • PWA</title>
-  <link rel="manifest" href="/robotics/manifest.webmanifest" />
-  <meta name="theme-color" content="#1c2541" />
-  <link rel="icon" href="/robotics/icons/icon-192.png" sizes="192x192" />
-  <link rel="apple-touch-icon" href="/robotics/icons/icon-192.png" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Smart Kitchen Assistant</title>
+  <link rel="manifest" href="/robotics/manifest.webmanifest">
+  <meta name="theme-color" content="#0f172a" />
+  <link rel="icon" sizes="192x192" href="/robotics/icons/icon-192.png">
+  <link rel="apple-touch-icon" href="/robotics/icons/icon-192.png">
   <style>
-    :root { --bg: #0f172a; --card:#111827; --fg:#e5e7eb; --accent:#3b82f6; --danger:#ef4444; }
-    *{box-sizing:border-box} body{margin:0;background:linear-gradient(135deg,#0f172a,#111827);color:var(--fg);font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;min-height:100svh}
-    header{padding:14px 18px;display:flex;justify-content:space-between;align-items:center;background:#0b1220;border-bottom:1px solid #1f2937;position:sticky;top:0}
-    .btn{cursor:pointer;border:0;border-radius:12px;padding:10px 14px;font-weight:700;color:#fff;background:var(--accent);display:none}
-    .btn.show{display:inline-block}
-    main{max-width:900px;margin:22px auto;padding:0 16px}
-    .card{background:#0b1220;border:1px solid #1f2937;border-radius:16px;padding:18px;box-shadow:0 8px 28px rgba(0,0,0,.35)}
-    h1{margin:0 0 6px;font-size:22px}
-    p{margin:8px 0}
-    /* Password gate */
-    #gate{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(10,12,22,.92);backdrop-filter:blur(6px);z-index:30}
-    #gate .panel{width:min(92svw,420px);background:#0b1220;border:1px solid #1f2937;border-radius:18px;padding:22px}
-    #gate h2{margin:0 0 10px}
-    .row{display:flex;gap:10px;margin-top:10px}
-    input[type=password]{flex:1;background:#0f172a;border:1px solid #233045;border-radius:12px;padding:12px;color:var(--fg);outline:none}
-    button.primary{background:var(--accent);color:#fff;border:0;border-radius:12px;padding:12px 14px;font-weight:800;cursor:pointer}
-    .err{color:var(--danger);font-weight:700;min-height:20px;margin-top:8px}
-    .hint{opacity:.75;font-size:.9rem}
+    :root { --bg:#0f172a; --card:#131c35; --fg:#e2e8f0; --accent:#22d3ee; }
+    html,body{height:100%} body{margin:0;background:linear-gradient(135deg,#0f172a,#1e293b);color:var(--fg);font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;display:flex;align-items:center;justify-content:center}
+    .card{width:min(720px,92vw);background:rgba(19,28,53,.85);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+    h1{margin:0 0 4px} .sub{opacity:.8;margin:0 0 16px}
+    .row{display:flex;gap:12px;flex-wrap:wrap}
+    button{cursor:pointer;border:1px solid rgba(255,255,255,.15);background:#0b1224;color:var(--fg);padding:12px 14px;border-radius:12px}
+    button.primary{background:linear-gradient(135deg,#22d3ee,#6366f1);border:none;color:#08111f;font-weight:700}
+    .ok{color:#22d3ee} .muted{opacity:.75}
+    /* Lock screen */
+    #lock{position:fixed;inset:0;background:radial-gradient(1200px 800px at 50% 20%,rgba(34,211,238,.15),transparent),#0b1224;display:flex;align-items:center;justify-content:center;z-index:30}
+    .lock-card{width:min(420px,92vw);background:#0f172a;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:22px;box-shadow:0 16px 48px rgba(0,0,0,.4)}
+    input{width:100%;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:#0b1224;color:var(--fg)}
+    .err{color:#fca5a5;height:18px;margin-top:8px}
+    .hidden{display:none}
+    /* Install hint */
+    #installBar{display:none;gap:10px;align-items:center;justify-content:space-between;margin:14px 0;padding:10px;border-radius:12px;background:#0b1224;border:1px solid rgba(255,255,255,.12)}
   </style>
 </head>
 <body>
-  <header>
-    <div>Smart Kitchen • PWA</div>
-    <button id="installBtn" class="btn">Install app</button>
-  </header>
-
-  <!-- Password gate -->
-  <section id="gate" aria-modal="true" role="dialog">
-    <div class="panel">
-      <h2>Enter password</h2>
-      <p class="hint">Protected demo • Enter the access code to continue</p>
-      <div class="row">
-        <input id="pwd" type="password" placeholder="Password" autocomplete="current-password" />
-        <button id="go" class="primary">Unlock</button>
+  <div id="lock">
+    <div class="lock-card">
+      <h2>Enter Password</h2>
+      <p class="muted">This app is protected. Please enter the access code to continue.</p>
+      <input id="pw" type="password" placeholder="Password" autocomplete="current-password" />
+      <div class="err" id="err"></div>
+      <div class="row" style="margin-top:10px">
+        <button class="primary" id="unlockBtn">Unlock</button>
       </div>
-      <div id="err" class="err"></div>
+      <p class="muted" style="margin-top:8px">Hint: smart123</p>
     </div>
-  </section>
+  </div>
 
-  <main id="app" hidden>
-    <div class="card">
-      <h1>Smart Kitchen App</h1>
-      <p>This is the installed‑ready web app shell without a service worker. Use the Install button above when available, or add to Home Screen on iOS. Add your UI here. </p>
-      <p>Repo path: /robotics/ • Icons loaded from /robotics/icons/. </p>
+  <div class="card">
+    <h1>Smart Kitchen Assistant</h1>
+    <p class="sub">Milk overflow + cooker whistle monitor with app control</p>
+
+    <div id="installBar">
+      <span>Install this app for offline and fullscreen use.</span>
+      <div class="row">
+        <button id="installBtn" class="primary">Install</button>
+        <button id="dismissBtn">Dismiss</button>
+      </div>
     </div>
-  </main>
+
+    <div class="muted" id="status">Status: Checking install support…</div>
+    <div style="margin-top:14px">
+      <p class="muted">PWA ready on GitHub Pages. Use the Install button above or your browser menu to add to home screen.</p>
+      <ul>
+        <li>Works offline after first load (app shell cached)</li>
+        <li>Auto‑hides the install prompt when already installed</li>
+        <li>Password‑gated client side (non‑critical protection)</li>
+      </ul>
+    </div>
+  </div>
 
   <script>
-    // ---- Password gate (client-side only; not strong security) ----
+    // --- Password gate (client-side) ---
     const PASS = "smart123";
-    const gate = document.getElementById('gate');
-    const app = document.getElementById('app');
-    const err = document.getElementById('err');
-    const pwd = document.getElementById('pwd');
-    const go = document.getElementById('go');
-
-    function unlockIfAuth() {
-      if (sessionStorage.getItem('auth') === 'ok') {
-        gate.style.display = 'none';
-        app.hidden = false;
-      }
-    }
-    function tryUnlock() {
-      if ((pwd.value || '').trim() === PASS) {
-        sessionStorage.setItem('auth','ok');
-        err.textContent = '';
-        unlockIfAuth();
+    const lock = document.getElementById("lock");
+    const unlockBtn = document.getElementById("unlockBtn");
+    const err = document.getElementById("err");
+    unlockBtn.addEventListener("click", () => {
+      const v = document.getElementById("pw").value.trim();
+      if (v === PASS) {
+        sessionStorage.setItem("access_ok", "1");
+        lock.classList.add("hidden");
       } else {
-        err.textContent = 'Wrong password';
+        err.textContent = "Wrong password.";
+      }
+    });
+    // Auto unlock for this tab if already entered
+    if (sessionStorage.getItem("access_ok") === "1") lock.classList.add("hidden");
+
+    // --- Service worker registration with scoped path /robotics/ ---
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/robotics/sw.js", { scope: "/robotics/" })
+        .then(reg => console.log("SW registered:", reg.scope))
+        .catch(err => console.error("SW registration failed:", err));
+    }
+
+    // --- PWA install prompt handling ---
+    let deferredPrompt = null;
+    const installBar = document.getElementById("installBar");
+    const installBtn = document.getElementById("installBtn");
+    const dismissBtn = document.getElementById("dismissBtn");
+    const statusEl = document.getElementById("status");
+
+    function isStandalone() {
+      return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+    }
+
+    function updateInstallUI() {
+      if (isStandalone()) {
+        installBar.style.display = "none";
+        statusEl.textContent = "Status: Installed (standalone mode)";
+      } else if (deferredPrompt) {
+        installBar.style.display = "flex";
+        statusEl.textContent = "Status: Install available";
+      } else {
+        installBar.style.display = "none";
+        statusEl.textContent = "Status: Install not available yet";
       }
     }
-    go.addEventListener('click', tryUnlock);
-    pwd.addEventListener('keydown', (e)=>{ if (e.key === 'Enter') tryUnlock(); });
-    unlockIfAuth();
 
-    // ---- PWA install flow without service worker ----
-    // Note: Installability depends on browser criteria; SW is not strictly required in modern Chromium menus, but criteria may still vary by platform.
-    // See MDN + Chrome updates for details.
-    let deferredPrompt = null;
-    const installBtn = document.getElementById('installBtn');
-
-    // Show button if app not installed and event is fired
-    window.addEventListener('beforeinstallprompt', (e) => {
+    window.addEventListener("beforeinstallprompt", (e) => {
+      // Best practice: prevent auto prompt and show your own UI later
       e.preventDefault();
       deferredPrompt = e;
-      // Only show if not already installed
-      const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-      if (!standalone) installBtn.classList.add('show');
+      console.log("beforeinstallprompt captured");
+      updateInstallUI();
     });
 
-    // Hide install button when installed
-    window.addEventListener('appinstalled', () => {
-      deferredPrompt = null;
-      installBtn.classList.remove('show');
-    });
-
-    // Also hide if already in standalone
-    if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) {
-      installBtn.classList.remove('show');
-    }
-
-    installBtn.addEventListener('click', async () => {
-      if (!deferredPrompt) {
-        // Fallback for platforms without beforeinstallprompt: suggest “Add to Home Screen” from browser menu
-        alert('Install not available here. Use your browser menu: Add to Home Screen / Install app.');
-        return;
-      }
+    installBtn.addEventListener("click", async () => {
+      if (!deferredPrompt) return;
       deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      // outcome: 'accepted' or 'dismissed'
+      const choice = await deferredPrompt.userChoice;
+      console.log("User choice:", choice.outcome);
       deferredPrompt = null;
-      if (outcome === 'accepted') installBtn.classList.remove('show');
+      updateInstallUI();
     });
+
+    dismissBtn.addEventListener("click", () => {
+      deferredPrompt = null;
+      updateInstallUI();
+    });
+
+    window.addEventListener("appinstalled", () => {
+      console.log("PWA installed");
+      deferredPrompt = null;
+      updateInstallUI();
+    });
+
+    // Initial UI status
+    updateInstallUI();
   </script>
 </body>
 </html>
