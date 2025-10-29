@@ -1,10 +1,10 @@
-const CACHE_NAME = 'kitchen-app-v1';
+const CACHE_NAME = 'smart-kitchen-v1';
 const urlsToCache = [
   '/robotics/',
   '/robotics/index.html',
   '/robotics/manifest.json',
-  '/robotics/icons/icon-192.png',
-  '/robotics/icons/icon-512.png',
+  '/robotics/icon-192.png',
+  '/robotics/icon-512.png',
   'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2'
 ];
 
