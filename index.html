@@ -2,358 +2,233 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
 <meta name="theme-color" content="#667eea"/>
-<meta name="description" content="Smart Kitchen Assistant - Milk overflow + cooker whistle monitor with app control"/>
-<title>Smart Kitchen Assistant</title>
+<title>Smart Kitchen • Live Control</title>
 
 <!-- PWA Manifest -->
 <link rel="manifest" href="manifest.json"/>
-<link rel="icon" type="image/png" href="icons/icon-192.png"/>
-<link rel="apple-touch-icon" href="icons/icon-192.png"/>
+<link rel="icon" type="image/png" href="icon.png"/>
+<link rel="apple-touch-icon" href="icon-512.png"/>
 
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { 
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  color: #333;
-}
-.container { width: 100%; max-width: 430px; }
-.card { 
-  background: #fff;
-  border-radius: 18px;
-  box-shadow: 0 20px 60px rgba(0,0,0,.3);
-  padding: 24px;
-  margin-bottom: 12px;
-}
-h1 { 
-  font-size: 24px;
-  font-weight: 800;
-  color: #667eea;
-  margin-bottom: 6px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.subtitle { 
-  font-size: 13px;
-  color: #666;
-  margin-bottom: 16px;
-  line-height: 1.4;
-}
-.install-banner {
-  background: linear-gradient(135deg, #4ecdc4, #44a3dd);
-  color: #fff;
-  padding: 14px 18px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  margin-bottom: 12px;
-}
-.install-banner:hover { 
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(68, 163, 221, 0.4);
-}
-.install-icon { font-size: 24px; }
-.hide { display: none !important; }
-
-/* Password Screen */
-.password-screen {
-  text-align: center;
-}
-.password-screen input {
-  width: 100%;
-  padding: 14px;
-  border: 2px solid #e9ecef;
-  border-radius: 10px;
-  font-size: 16px;
-  margin: 12px 0;
-  transition: border-color 0.2s;
-}
-.password-screen input:focus {
-  outline: none;
-  border-color: #667eea;
-}
-.password-screen button {
-  width: 100%;
-  padding: 14px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-.password-screen button:hover {
-  transform: translateY(-2px);
-}
-.error-msg {
-  color: #dc3545;
-  font-size: 14px;
-  margin-top: 8px;
-  font-weight: 600;
-}
-.hint {
-  font-size: 12px;
-  color: #999;
-  margin-top: 8px;
-}
-
-/* Main App (Supabase Realtime) */
-.mode { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
-button { cursor: pointer; border: none; border-radius: 12px; padding: 14px 12px; font-weight: 700; }
-.btn { background: #f1f3f5; transition: all 0.2s; }
-.btn.active { background: #667eea; color: #fff; box-shadow: 0 6px 18px rgba(102,126,234,.35); }
-.stats { background: #f8f9fb; border-radius: 12px; padding: 12px; margin: 12px 0; }
-.item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e9ecef; }
-.item:last-child { border-bottom: none; }
-.big { font-size: 28px; font-weight: 800; text-align: center; background: linear-gradient(135deg,#667eea,#764ba2); color: #fff; border-radius: 12px; padding: 12px; }
-.minus { background: linear-gradient(135deg,#ff6b6b,#ee5a6f); color: #fff; }
-.plus { background: linear-gradient(135deg,#4ecdc4,#44a3dd); color: #fff; }
-.start { background: linear-gradient(135deg,#28a745,#20c997); color: #fff; flex: 1; }
-.stop { background: linear-gradient(135deg,#dc3545,#c82333); color: #fff; flex: 1; }
-.status { display: inline-block; padding: 6px 10px; border-radius: 999px; font-weight: 700; font-size: 12px; }
-.run { background: #d1f7e1; color: #117a37; } 
-.halt { background: #e9ecef; color: #495057; }
-.conn { margin: 10px 0; padding: 10px; border-radius: 10px; text-align: center; font-weight: 700; font-size: 12px; }
-.ok { background: #d4edda; color: #155724; } 
-.bad { background: #f8d7da; color: #721c24; }
-.bar { height: 22px; background: #e9ecef; border-radius: 12px; overflow: hidden; margin: 12px 0; }
-.fill { height: 100%; background: linear-gradient(90deg,#667eea,#764ba2); width: 0%; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; transition: width .2s; }
-.row { display: flex; gap: 10px; margin: 12px 0; }
+  *{box-sizing:border-box} 
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;margin:0;display:flex;align-items:center;justify-content:center;padding:16px}
+  
+  /* Password Screen */
+  .login{max-width:400px;width:100%;background:#fff;border-radius:18px;box-shadow:0 18px 60px rgba(0,0,0,.25);padding:32px;text-align:center}
+  .login h1{margin:0 0 24px;color:#4b5bdc;font-size:28px}
+  .login input{width:100%;padding:14px;border:2px solid #e9ecef;border-radius:12px;font-size:16px;margin-bottom:16px}
+  .login input:focus{outline:none;border-color:#667eea}
+  .login button{width:100%;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;padding:14px;border-radius:12px;font-weight:700;font-size:16px;cursor:pointer}
+  .login button:hover{opacity:0.9}
+  .login .error{color:#dc3545;font-size:14px;margin-top:12px;display:none}
+  
+  /* Main App */
+  .card{width:100%;max-width:430px;background:#fff;border-radius:18px;box-shadow:0 18px 60px rgba(0,0,0,.25);padding:22px;display:none}
+  .card.active{display:block}
+  
+  h1{margin:0 0 8px;color:#4b5bdc;font-size:22px;display:flex;align-items:center;justify-content:space-between}
+  .install-btn{background:linear-gradient(135deg,#28a745,#20c997);color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;display:none}
+  .install-btn:hover{opacity:0.9}
+  
+  .row{display:flex;gap:10px;margin:12px 0}
+  .mode{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  button{cursor:pointer;border:none;border-radius:12px;padding:14px 12px;font-weight:700}
+  .btn{background:#f1f3f5} .btn.active{background:#667eea;color:#fff;box-shadow:0 6px 18px rgba(102,126,234,.35)}
+  .stats{background:#f8f9fb;border-radius:12px;padding:12px}
+  .item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #e9ecef}
+  .item:last-child{border-bottom:none}
+  .big{font-size:28px;font-weight:800;text-align:center;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:12px;padding:12px}
+  .minus{background:linear-gradient(135deg,#ff6b6b,#ee5a6f);color:#fff}
+  .plus{background:linear-gradient(135deg,#4ecdc4,#44a3dd);color:#fff}
+  .start{background:linear-gradient(135deg,#28a745,#20c997);color:#fff;flex:1}
+  .stop{background:linear-gradient(135deg,#dc3545,#c82333);color:#fff;flex:1}
+  .status{display:inline-block;padding:6px 10px;border-radius:999px;font-weight:700;font-size:12px}
+  .run{background:#d1f7e1;color:#117a37} .halt{background:#e9ecef;color:#495057}
+  .conn{margin:10px 0;padding:10px;border-radius:10px;text-align:center;font-weight:700;font-size:12px}
+  .ok{background:#d4edda;color:#155724} .bad{background:#f8d7da;color:#721c24}
+  .bar{height:22px;background:#e9ecef;border-radius:12px;overflow:hidden}
+  .fill{height:100%;background:linear-gradient(90deg,#667eea,#764ba2);width:0%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;transition:width .2s}
 </style>
 </head>
 <body>
 
-<!-- Password Protection Screen -->
-<div id="passwordScreen" class="container">
-  <div class="card password-screen">
-    <h1>🔒 Smart Kitchen</h1>
-    <p class="subtitle">This app is protected. Please enter the access code to continue.</p>
-    <input type="password" id="passwordInput" placeholder="Enter access code" autocomplete="off"/>
-    <button onclick="checkPassword()">Unlock</button>
-    <p id="errorMsg" class="error-msg hide">❌ Incorrect password</p>
-    <p class="hint">Hint: smart123</p>
-  </div>
-  <p style="text-align:center; color:#fff; font-size:13px; margin-top:12px;">
-    Milk overflow + cooker whistle monitor with app control
-  </p>
+<!-- Password Screen -->
+<div class="login" id="loginScreen">
+  <h1>🔐 Smart Kitchen</h1>
+  <p style="color:#6c757d;margin-bottom:24px">Enter password to access</p>
+  <input type="password" id="passwordInput" placeholder="Password" autocomplete="off"/>
+  <button onclick="checkPassword()">Unlock</button>
+  <div class="error" id="errorMsg">Incorrect password!</div>
 </div>
 
-<!-- Main App (hidden until password correct) -->
-<div id="mainApp" class="container hide">
-  
-  <!-- Install Banner (shows only when not installed) -->
-  <div id="installBanner" class="install-banner hide" onclick="installApp()">
-    <span class="install-icon">📲</span>
-    <div style="flex:1">
-      <div style="font-weight:800">Install App</div>
-      <div style="font-size:12px; opacity:0.9">Add to home screen for quick access</div>
-    </div>
+<!-- Main App (Hidden Until Password Correct) -->
+<div class="card" id="mainApp">
+  <h1>
+    🔥 Smart Kitchen
+    <button class="install-btn" id="installBtn" onclick="installApp()">📱 Install</button>
+  </h1>
+  <div id="conn" class="conn bad">Connecting…</div>
+
+  <div class="mode row">
+    <button id="milkBtn" class="btn" onclick="setMode('milk')">🥛 Milk</button>
+    <button id="cookBtn" class="btn" onclick="setMode('cooker')">🍲 Cooker</button>
   </div>
 
-  <div class="card">
-    <h1>🔥 Smart Kitchen</h1>
-    <p class="subtitle">PWA ready on GitHub Pages. Use the Install button above or your browser menu to add to home screen.</p>
-    <div id="conn" class="conn bad">Connecting…</div>
+  <div class="stats">
+    <div class="item"><span>Mode</span><span id="modeTxt">-</span></div>
+    <div class="item" id="tgRow"><span>Target</span><span id="tgtTxt">-</span></div>
+    <div class="item" id="ctRow"><span>Count</span><span id="cntTxt">-</span></div>
+    <div class="item"><span>Status</span><span id="runTxt"><span class="status halt">STOPPED</span></span></div>
+  </div>
 
-    <div class="mode row">
-      <button id="milkBtn" class="btn" onclick="setMode('milk')">🥛 Milk</button>
-      <button id="cookBtn" class="btn" onclick="setMode('cooker')">🍲 Cooker</button>
-    </div>
+  <div id="progBox" style="margin:12px 0;display:none">
+    <div class="bar"><div id="fill" class="fill">0%</div></div>
+  </div>
 
-    <div class="stats">
-      <div class="item"><span>Mode</span><span id="modeTxt">-</span></div>
-      <div class="item" id="tgRow"><span>Target</span><span id="tgtTxt">-</span></div>
-      <div class="item" id="ctRow"><span>Count</span><span id="cntTxt">-</span></div>
-      <div class="item"><span>Status</span><span id="runTxt"><span class="status halt">STOPPED</span></span></div>
-    </div>
+  <div id="ctl1" class="row" style="display:none">
+    <button class="minus" onclick="changeTarget(-1)">−</button>
+    <div class="big" style="flex:1" id="bigTgt">3</div>
+    <button class="plus" onclick="changeTarget(1)">+</button>
+  </div>
 
-    <div id="progBox" style="display:none">
-      <div class="bar"><div id="fill" class="fill">0%</div></div>
-    </div>
-
-    <div id="ctl1" class="row" style="display:none">
-      <button class="minus" onclick="changeTarget(-1)">−</button>
-      <div class="big" style="flex:1" id="bigTgt">3</div>
-      <button class="plus" onclick="changeTarget(1)">+</button>
-    </div>
-
-    <div id="ctl2" class="row">
-      <button class="start" onclick="toggleRun(true)">▶️ START</button>
-      <button class="stop" onclick="toggleRun(false)">⏸️ STOP</button>
-    </div>
+  <div id="ctl2" class="row">
+    <button class="start" onclick="toggleRun(true)">▶️ START</button>
+    <button class="stop" onclick="toggleRun(false)">⏸️ STOP</button>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ==================== PASSWORD PROTECTION ====================
+// ===== PASSWORD PROTECTION =====
 const CORRECT_PASSWORD = 'smart123';
-const PASSWORD_KEY = 'kitchen_app_unlocked';
+const PASSWORD_KEY = 'kitchen_auth';
 
 function checkPassword() {
   const input = document.getElementById('passwordInput').value;
-  const errorMsg = document.getElementById('errorMsg');
-  
   if (input === CORRECT_PASSWORD) {
     sessionStorage.setItem(PASSWORD_KEY, 'true');
-    document.getElementById('passwordScreen').classList.add('hide');
-    document.getElementById('mainApp').classList.remove('hide');
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('mainApp').classList.add('active');
+    document.getElementById('errorMsg').style.display = 'none';
     initApp();
   } else {
-    errorMsg.classList.remove('hide');
+    document.getElementById('errorMsg').style.display = 'block';
     document.getElementById('passwordInput').value = '';
-    setTimeout(() => errorMsg.classList.add('hide'), 3000);
   }
 }
 
-// Check if already unlocked in this session
-if (sessionStorage.getItem(PASSWORD_KEY) === 'true') {
-  document.getElementById('passwordScreen').classList.add('hide');
-  document.getElementById('mainApp').classList.remove('hide');
-  window.addEventListener('load', initApp);
-}
-
-// Enter key support
-document.getElementById('passwordInput')?.addEventListener('keypress', (e) => {
+document.getElementById('passwordInput').addEventListener('keypress', (e) => {
   if (e.key === 'Enter') checkPassword();
 });
 
-// ==================== PWA INSTALL ====================
+// Check if already authenticated
+if (sessionStorage.getItem(PASSWORD_KEY) === 'true') {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('mainApp').classList.add('active');
+  initApp();
+}
+
+// ===== PWA INSTALL =====
 let deferredPrompt;
+const installBtn = document.getElementById('installBtn');
 
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  document.getElementById('installBanner').classList.remove('hide');
+  installBtn.style.display = 'block';
 });
 
-async function installApp() {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  const result = await deferredPrompt.userChoice;
-  if (result.outcome === 'accepted') {
-    document.getElementById('installBanner').classList.add('hide');
+function installApp() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choice) => {
+      if (choice.outcome === 'accepted') {
+        console.log('App installed');
+      }
+      deferredPrompt = null;
+      installBtn.style.display = 'none';
+    });
   }
-  deferredPrompt = null;
 }
 
-// Hide banner if already installed
 window.addEventListener('appinstalled', () => {
-  document.getElementById('installBanner').classList.add('hide');
+  console.log('App installed successfully');
+  installBtn.style.display = 'none';
 });
 
-// Check if running as installed PWA
-if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-  document.getElementById('installBanner').classList.add('hide');
+// ===== REGISTER SERVICE WORKER =====
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js')
+    .then(reg => console.log('Service Worker registered', reg))
+    .catch(err => console.log('Service Worker registration failed', err));
 }
 
-// ==================== SUPABASE REALTIME APP ====================
-const SUPABASE_URL = 'https://uvytcbkxhhhgnikujvms.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2eXRjYmt4aGhoZ25pa3Vqdm1zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0MTQ0NzIsImV4cCI6MjA3Njk5MDQ3Mn0.XcaHyWsYcp5e349MWojgRowknACstDWb1JKzh72NPpw';
-const ROW_ID = 1;
+// ===== SUPABASE APP LOGIC =====
+const SUPABASE_URL='https://uvytcbkxhhhgnikujvms.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2eXRjYmt4aGhoZ25pa3Vqdm1zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0MTQ0NzIsImV4cCI6MjA3Njk5MDQ3Mn0.XcaHyWsYcp5e349MWojgRowknACstDWb1JKzh72NPpw';
+const ROW_ID=1;
+let sb, state={mode:'milk',target_count:3,current_count:0,is_running:false}, appWriteAt=0;
 
-let sb, state, appWriteAt;
+const milkBtn=document.getElementById('milkBtn'), cookBtn=document.getElementById('cookBtn'), connBox=document.getElementById('conn');
+const modeTxt=document.getElementById('modeTxt'), tgtTxt=document.getElementById('tgtTxt'), cntTxt=document.getElementById('cntTxt');
+const runTxt=document.getElementById('runTxt'), progBox=document.getElementById('progBox'), fill=document.getElementById('fill');
+const ctl1=document.getElementById('ctl1'), bigTgt=document.getElementById('bigTgt'), tgRow=document.getElementById('tgRow'), ctRow=document.getElementById('ctRow');
 
-function initApp() {
-  sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { realtime: { params: { eventsPerSecond: 40 } } });
-  state = { mode: 'milk', target_count: 3, current_count: 0, is_running: false };
-  appWriteAt = 0;
+function setConn(ok){ connBox.className='conn '+(ok?'ok':'bad'); connBox.textContent=ok?'✅ Live':'❌ Offline'; }
 
-  loadOnce().then(subRealtime);
+function render(){
+  modeTxt.textContent=state.mode.toUpperCase();
+  tgtTxt.textContent=state.target_count; bigTgt.textContent=state.target_count; cntTxt.textContent=state.current_count;
+  milkBtn.classList.toggle('active',state.mode==='milk'); cookBtn.classList.toggle('active',state.mode==='cooker');
+  const isCooker=state.mode==='cooker';
+  tgRow.style.display=isCooker?'flex':'none'; ctRow.style.display=isCooker?'flex':'none';
+  ctl1.style.display=isCooker?'flex':'none'; progBox.style.display=isCooker?'block':'none';
+  runTxt.innerHTML = state.is_running ? '<span class="status run">RUNNING</span>' : '<span class="status halt">STOPPED</span>';
+  if(isCooker){const p=state.target_count>0?Math.min(100,Math.max(0,(state.current_count/state.target_count)*100)):0; fill.style.width=p+'%'; fill.textContent=Math.round(p)+'%';}
 }
 
-function setConn(ok) {
-  const box = document.getElementById('conn');
-  box.className = 'conn ' + (ok ? 'ok' : 'bad');
-  box.textContent = ok ? '✅ Live via Realtime' : '❌ Offline / Reconnecting';
+async function loadOnce(){
+  const {data,error}=await sb.from('cooking_system').select('mode,target_count,current_count,is_running').eq('id',ROW_ID).single();
+  if(!error&&data){ state=data; render(); setConn(true); } else setConn(false);
 }
 
-function render() {
-  document.getElementById('modeTxt').textContent = state.mode.toUpperCase();
-  document.getElementById('tgtTxt').textContent = state.target_count;
-  document.getElementById('cntTxt').textContent = state.current_count;
-  document.getElementById('bigTgt').textContent = state.target_count;
-  
-  document.getElementById('milkBtn').classList.toggle('active', state.mode === 'milk');
-  document.getElementById('cookBtn').classList.toggle('active', state.mode === 'cooker');
-  
-  const isCooker = state.mode === 'cooker';
-  document.getElementById('tgRow').style.display = isCooker ? 'flex' : 'none';
-  document.getElementById('ctRow').style.display = isCooker ? 'flex' : 'none';
-  document.getElementById('ctl1').style.display = isCooker ? 'flex' : 'none';
-  document.getElementById('progBox').style.display = isCooker ? 'block' : 'none';
-  
-  document.getElementById('runTxt').innerHTML = state.is_running 
-    ? '<span class="status run">RUNNING</span>' 
-    : '<span class="status halt">STOPPED</span>';
-  
-  if (isCooker) {
-    const p = state.target_count > 0 ? Math.min(100, Math.max(0, (state.current_count / state.target_count) * 100)) : 0;
-    document.getElementById('fill').style.width = p + '%';
-    document.getElementById('fill').textContent = Math.round(p) + '%';
-  }
-}
-
-async function loadOnce() {
-  const { data, error } = await sb.from('cooking_system').select('mode,target_count,current_count,is_running').eq('id', ROW_ID).single();
-  if (!error && data) { state = data; render(); setConn(true); }
-  else setConn(false);
-}
-
-function subRealtime() {
+function subRealtime(){
   sb.channel('rt')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'cooking_system', filter: `id=eq.${ROW_ID}` }, (payload) => {
-      const row = payload.new || payload.old;
-      if (!row) return;
-      if (Date.now() - appWriteAt < 250) return; // ignore echo
-      state = { mode: row.mode, target_count: row.target_count, current_count: row.current_count, is_running: row.is_running };
+    .on('postgres_changes',{event:'*',schema:'public',table:'cooking_system',filter:`id=eq.${ROW_ID}`},(payload)=>{
+      const row=payload.new||payload.old; if(!row) return;
+      if(Date.now()-appWriteAt<250) return;
+      state={mode:row.mode,target_count:row.target_count,current_count:row.current_count,is_running:row.is_running};
       render();
     })
-    .subscribe(status => setConn(status === 'SUBSCRIBED'));
+    .subscribe(status=> setConn(status==='SUBSCRIBED'));
 }
 
-async function setMode(mode) {
-  state.mode = mode; state.current_count = 0; state.is_running = false; render();
-  appWriteAt = Date.now();
-  await sb.from('cooking_system').update({ mode, current_count: 0, is_running: false }).eq('id', ROW_ID);
+async function setMode(mode){
+  state.mode=mode; state.current_count=0; state.is_running=false; render();
+  appWriteAt=Date.now();
+  await sb.from('cooking_system').update({mode,current_count:0,is_running:false}).eq('id',ROW_ID);
 }
 
-async function changeTarget(d) {
-  if (state.mode !== 'cooker') return;
-  const next = Math.max(1, Math.min(20, state.target_count + d));
-  if (next === state.target_count) return;
-  state.target_count = next; render();
-  appWriteAt = Date.now();
-  await sb.from('cooking_system').update({ target_count: next }).eq('id', ROW_ID);
+async function changeTarget(d){
+  if(state.mode!=='cooker')return;
+  const next=Math.max(1,Math.min(20,state.target_count+d)); if(next===state.target_count)return;
+  state.target_count=next; render();
+  appWriteAt=Date.now();
+  await sb.from('cooking_system').update({target_count:next}).eq('id',ROW_ID);
 }
 
-async function toggleRun(run) {
-  state.is_running = !!run;
-  if (run && state.mode === 'cooker') state.current_count = 0;
-  render();
-  appWriteAt = Date.now();
-  const upd = run ? { is_running: true, ...(state.mode === 'cooker' ? { current_count: 0 } : {}) } : { is_running: false };
-  await sb.from('cooking_system').update(upd).eq('id', ROW_ID);
+async function toggleRun(run){
+  state.is_running=!!run; if(run && state.mode==='cooker') state.current_count=0; render();
+  appWriteAt=Date.now();
+  const upd=run?{is_running:true, ...(state.mode==='cooker'?{current_count:0}:{})}:{is_running:false};
+  await sb.from('cooking_system').update(upd).eq('id',ROW_ID);
 }
 
-// Register service worker
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('service-worker.js');
+function initApp(){
+  sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{realtime:{params:{eventsPerSecond:40}}});
+  loadOnce().then(subRealtime);
 }
 </script>
 </body>
