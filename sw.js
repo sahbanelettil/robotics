@@ -1,35 +1,37 @@
-// Simple app-shell cache for /robotics/
-const CACHE = "robotics-app-v1";
-const APP_SHELL = [
-  "/robotics/",
-  "/robotics/index.html",
-  "/robotics/manifest.webmanifest",
-  "/robotics/sw.js",
-  "/robotics/icons/icon-192.png",
-  "/robotics/icons/icon-512.png"
+const CACHE_NAME = 'kitchen-app-v1';
+const urlsToCache = [
+  '/robotics/',
+  '/robotics/index.html',
+  '/robotics/manifest.json',
+  '/robotics/icons/icon-192.png',
+  '/robotics/icons/icon-512.png',
+  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2'
 ];
 
-self.addEventListener("install", (e) => {
-  e.waitUntil(
-    caches.open(CACHE).then((c) => c.addAll(APP_SHELL))
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then((cache) => cache.addAll(urlsToCache))
   );
 });
 
-self.addEventListener("activate", (e) => {
-  e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    )
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.match(event.request)
+      .then((response) => response || fetch(event.request))
   );
-  self.clients.claim();
 });
 
-self.addEventListener("fetch", (e) => {
-  const url = new URL(e.request.url);
-  // Only cache same-origin requests
-  if (url.origin === location.origin) {
-    e.respondWith(
-      caches.match(e.request).then(res => res || fetch(e.request))
-    );
-  }
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
 });
