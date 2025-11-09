@@ -1,184 +1,103 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Smart Kitchen Control</title>
-<style>
-  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;margin:0;display:flex;align-items:center;justify-content:center;padding:16px}
-  .card{width:100%;max-width:430px;background:#fff;border-radius:18px;box-shadow:0 18px 60px rgba(0,0,0,.25);padding:22px}
-  h1{margin:0 0 8px;color:#4b5bdc;font-size:22px}
-  .row{display:flex;gap:10px;margin:12px 0}
-  .mode{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-  button{cursor:pointer;border:none;border-radius:12px;padding:14px 12px;font-weight:700;}
-  .btn{background:#f1f3f5}
-  .btn.active{background:#667eea;color:#fff;box-shadow:0 6px 18px rgba(102,126,234,.35)}
-  .stats{background:#f8f9fb;border-radius:12px;padding:12px}
-  .item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #e9ecef}
-  .item:last-child{border-bottom:none}
-  .big{font-size:28px;font-weight:800;text-align:center;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:12px;padding:12px}
-  .minus{background:linear-gradient(135deg,#ff6b6b,#ee5a6f);color:#fff}
-  .plus{background:linear-gradient(135deg,#4ecdc4,#44a3dd);color:#fff}
-  .start{background:linear-gradient(135deg,#28a745,#20c997);color:#fff;flex:1;}
-  .stop{background:linear-gradient(135deg,#dc3545,#c82333);color:#fff;flex:1;}
-  .status{display:inline-block;padding:6px 10px;border-radius:999px;font-weight:700;font-size:12px}
-  .run{background:#d1f7e1;color:#117a37} .halt{background:#e9ecef;color:#495057}
-  .bar{height:22px;background:#e9ecef;border-radius:12px;overflow:hidden}
-  .fill{height:100%;background:linear-gradient(90deg,#667eea,#764ba2);width:0%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;transition:width .2s}
-  .conn{margin:10px 0;padding:10px;border-radius:10px;text-align:center;font-weight:700;font-size:12px}
-  .ok{background:#d4edda;color:#155724} .bad{background:#f8d7da;color:#721c24}
-</style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+  <meta name="description" content="Smart Kitchen Control - IoT kitchen safety system with milk overflow detection, cooker whistle counting, and timer control"/>
+  <meta name="keywords" content="smart kitchen, IoT, milk overflow, cooker, timer, home automation"/>
+  <meta name="author" content="Smart Kitchen Team"/>
+  
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#667eea"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="Kitchen"/>
+  
+  <!-- iOS Splash Screen -->
+  <link rel="apple-touch-icon" href="icon-192.png"/>
+  <link rel="apple-touch-startup-image" href="icon-512.png"/>
+  
+  <!-- Manifest -->
+  <link rel="manifest" href="manifest.json"/>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"/>
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png"/>
+  
+  <title>Smart Kitchen Control</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="card">
-  <h1>🔥 Smart Kitchen</h1>
-  <div id="conn" class="conn bad">Connecting…</div>
+  <div class="card">
+    <!-- Install Button (Hidden by default) -->
+    <div id="installContainer" class="install-container" style="display:none;">
+      <button id="installBtn" class="install-btn">
+        📲 Install App
+      </button>
+    </div>
 
-  <div class="mode row">
-    <button id="milkBtn" class="btn" onclick="setMode('milk')">🥛 Milk</button>
-    <button id="cookBtn" class="btn" onclick="setMode('cooker')">🍲 Cooker</button>
-    <button id="timerBtn" class="btn" onclick="setMode('timer')">⏲️ Timer</button>
+    <h1>🔥 Smart Kitchen</h1>
+    <div id="conn" class="conn bad">Connecting…</div>
+
+    <!-- Mode Selection -->
+    <div class="mode row">
+      <button id="milkBtn" class="btn" onclick="setMode('milk')">🥛 Milk</button>
+      <button id="cookBtn" class="btn" onclick="setMode('cooker')">🍲 Cooker</button>
+      <button id="timerBtn" class="btn" onclick="setMode('timer')">⏲️ Timer</button>
+    </div>
+
+    <!-- Status Display -->
+    <div class="stats">
+      <div class="item">
+        <span>Mode</span>
+        <span id="modeTxt">-</span>
+      </div>
+      <div class="item" id="tgRow">
+        <span id="tgLabel">Target</span>
+        <span id="tgtTxt">-</span>
+      </div>
+      <div class="item" id="ctRow">
+        <span id="ctLabel">Count</span>
+        <span id="cntTxt">-</span>
+      </div>
+      <div class="item">
+        <span>Status</span>
+        <span id="runTxt">
+          <span class="status halt">STOPPED</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div id="progBox" style="margin:12px 0; display:none">
+      <div class="bar">
+        <div id="fill" class="fill">0%</div>
+      </div>
+    </div>
+
+    <!-- Target Adjustment Controls -->
+    <div id="ctl1" class="row" style="display:none">
+      <button class="minus" onclick="changeTarget(-1)">−</button>
+      <div class="big" style="flex:1" id="bigTgt">3</div>
+      <button class="plus" onclick="changeTarget(1)">+</button>
+    </div>
+
+    <!-- Start/Stop Controls -->
+    <div id="ctl2" class="row">
+      <button class="start" onclick="toggleRun(true)">▶️ START</button>
+      <button class="stop" onclick="toggleRun(false)">⏸️ STOP</button>
+    </div>
+
+    <!-- Update Available Notification -->
+    <div id="updateNotification" class="update-notification" style="display:none;">
+      <span>New version available!</span>
+      <button id="reloadBtn" class="reload-btn">Update</button>
+    </div>
   </div>
 
-  <div class="stats">
-    <div class="item"><span>Mode</span><span id="modeTxt">-</span></div>
-    <div class="item" id="tgRow"><span id="tgLabel">Target</span><span id="tgtTxt">-</span></div>
-    <div class="item" id="ctRow"><span id="ctLabel">Count</span><span id="cntTxt">-</span></div>
-    <div class="item"><span>Status</span><span id="runTxt"><span class="status halt">STOPPED</span></span></div>
-  </div>
-
-  <div id="progBox" style="margin:12px 0;display:none">
-    <div class="bar"><div id="fill" class="fill">0%</div></div>
-  </div>
-
-  <div id="ctl1" class="row" style="display:none">
-    <button class="minus" onclick="changeTarget(-1)">−</button>
-    <div class="big" style="flex:1" id="bigTgt">3</div>
-    <button class="plus" onclick="changeTarget(1)">+</button>
-  </div>
-
-  <div id="ctl2" class="row">
-    <button class="start" onclick="toggleRun(true)">▶️ START</button>
-    <button class="stop" onclick="toggleRun(false)">⏸️ STOP</button>
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const SUPABASE_URL='https://uvytcbkxhhhgnikujvms.supabase.co';
-const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2eXRjYmt4aGhoZ25pa3Vqdm1zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0MTQ0NzIsImV4cCI6MjA3Njk5MDQ3Mn0.XcaHyWsYcp5e349MWojgRowknACstDWb1JKzh72NPpw';
-const ROW_ID=1;
-const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{realtime:{params:{eventsPerSecond:40}}});
-
-// --- State ---
-let state = { mode:'milk', target_count:3, current_count:0, is_running:false };
-let appWriteAt=0;
-
-// -- UI Elements
-const milkBtn = document.getElementById('milkBtn'),
-      cookBtn = document.getElementById('cookBtn'),
-      timerBtn= document.getElementById('timerBtn'),
-      connBox = document.getElementById('conn'),
-      modeTxt = document.getElementById('modeTxt'),
-      tgtTxt  = document.getElementById('tgtTxt'),
-      cntTxt  = document.getElementById('cntTxt'),
-      runTxt  = document.getElementById('runTxt'),
-      progBox = document.getElementById('progBox'),
-      fill    = document.getElementById('fill'),
-      ctl1    = document.getElementById('ctl1'),
-      bigTgt  = document.getElementById('bigTgt'),
-      tgRow   = document.getElementById('tgRow'),
-      ctRow   = document.getElementById('ctRow'),
-      tgLabel = document.getElementById('tgLabel'),
-      ctLabel = document.getElementById('ctLabel');
-
-// -- Helper functions --
-function secToMMSS(s){ s=Number(s)||0; const m=Math.floor(s/60), ss=('0'+(s%60)).slice(-2); return `${m}:${ss}`; }
-function setConn(ok){ connBox.className='conn '+(ok?'ok':'bad'); connBox.textContent=ok?'✅ Live':'❌ Offline'; }
-
-function render(){
-  const m = state.mode;
-  modeTxt.textContent = (m=="milk"?"MILK":m=="cooker"?"COOKER":"TIMER");
-  milkBtn.classList.toggle('active', m==='milk'); cookBtn.classList.toggle('active', m==='cooker'); timerBtn.classList.toggle('active', m==='timer');
-  bigTgt.textContent = m==='timer' ? secToMMSS(state.target_count) : state.target_count;
-
-  // Target row
-  if (m=='timer') { tgLabel.textContent="Target"; tgtTxt.textContent=secToMMSS(state.target_count); }
-  else            { tgLabel.textContent="Target"; tgtTxt.textContent=state.target_count; }
-
-  // Count row
-  if (m=='timer') { ctRow.style.display='flex'; ctLabel.textContent="Elapsed"; cntTxt.textContent=secToMMSS(state.current_count); }
-  else if (m=='cooker') { ctRow.style.display='flex'; ctLabel.textContent="Count"; cntTxt.textContent=state.current_count; }
-  else { ctRow.style.display='none'; }
-
-  // Target adjust UI
-  if (m=='cooker' || m=='timer') ctl1.style.display = 'flex';
-  else ctl1.style.display = 'none';
-  // Progress bar only for timer/cooker
-  if (m=='timer' || m=='cooker') progBox.style.display='block';
-  else progBox.style.display='none';
-
-  // Progress bar
-  let pct = 0;
-  if (m=='timer' && state.target_count > 0) pct = Math.min(100,100*state.current_count/state.target_count);
-  if (m=='cooker' && state.target_count > 0) pct = Math.min(100,100*state.current_count/state.target_count);
-  fill.style.width = pct + '%';
-  fill.textContent = pct?Math.round(pct)+'%':'0%';
-
-  runTxt.innerHTML = state.is_running
-    ? '<span class="status run">RUNNING</span>'
-    : '<span class="status halt">STOPPED</span>';
-}
-
-function getStep(){ return state.mode==='timer'?30:1; }
-
-async function loadOnce(){
-  const {data,error}=await sb.from('cooking_system').select('mode,target_count,current_count,is_running').eq('id',ROW_ID).single();
-  if (!error&&data){ state=data; render(); setConn(true); } else setConn(false);
-}
-
-function subRealtime(){
-  sb.channel('smrtkitchenrt')
-    .on('postgres_changes',{event:'*',schema:'public',table:'cooking_system',filter:`id=eq.${ROW_ID}`},(payload)=>{
-      const row=payload.new||payload.old; if(!row) return;
-      if(Date.now()-appWriteAt<250) return; // ignore our echo
-      state={mode:row.mode,target_count:row.target_count,current_count:row.current_count,is_running:row.is_running};
-      render();
-    })
-    .subscribe(status=> setConn(status==='SUBSCRIBED'));
-}
-
-// --- Controls ---
-async function setMode(mode){
-  if (!['milk','cooker','timer'].includes(mode)) return;
-  state.mode=mode; state.is_running=false; state.current_count=0;
-  render();
-  appWriteAt = Date.now();
-  await sb.from('cooking_system').update({ mode, is_running:false, current_count:0 }).eq('id', ROW_ID);
-}
-
-async function changeTarget(dir){
-  const step = getStep();
-  let next = state.target_count + dir*step;
-  if (state.mode==='cooker')   next = Math.max(1, Math.min(20, next));
-  else if (state.mode==='timer') next = Math.max(30, Math.min(3600, next));
-  else return;
-  state.target_count = next; render();
-  appWriteAt = Date.now();
-  await sb.from('cooking_system').update({ target_count: next }).eq('id', ROW_ID);
-}
-
-async function toggleRun(run){
-  state.is_running=!!run; if(run&&(state.mode!=='milk')) state.current_count=0;
-  render();
-  appWriteAt = Date.now();
-  const upd = run
-    ? { is_running:true, ...(state.mode!=='milk'?{ current_count:0 }:{}) }
-    : { is_running:false };
-  await sb.from('cooking_system').update(upd).eq('id', ROW_ID);
-}
-
-loadOnce().then(subRealtime);
-</script>
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Your App Logic -->
+  <script src="app.js"></script>
 </body>
 </html>
